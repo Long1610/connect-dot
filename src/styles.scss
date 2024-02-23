@@ -1,0 +1,76 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+.SVGGrid-circle {
+  fill: navy;
+  stroke: navy;
+
+  &:hover,
+  &-active {
+    fill: blue;
+  }
+}
+
+.SVGGrid-line {
+  fill: navy;
+  stroke: navy;
+
+  &:hover {
+    fill: red;
+    stroke: red;
+  }
+}
+
+.text {
+  color: white;
+  border-radius: 16px;
+  padding: 8px;
+  background: rgb(87, 79, 79);
+  width: 300px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background: gray;
+  border-radius: 999px;
+}
+
+.box-left,
+.box-right {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.wrapper-text-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.wrapper {
+  display: flex;
+  gap: 100px;
+}
+
+.wrapper-text-right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.box-text {
+  display: flex;
+  gap: 16px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgb(87, 79, 79);
+  width: 300px;
+  height: 200px;
+  color: white;
+  border-radius: 16px;
+}
