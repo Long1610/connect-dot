@@ -74,3 +74,11 @@
   color: white;
   border-radius: 16px;
 }
+
+.active {
+  .box-text,
+  .text,
+  .dot {
+    background: black;
+  }
+}

@@ -8,9 +8,10 @@ const arrleft = [
 ];
 const arrright = [
   { text: "g", sub: "g", id: "g", color: "red" },
-  { text: "h", sub: "h", id: "h", color: "red" },
-  { text: "i", sub: "i", id: "i" },
+  { text: "h", sub: "h", id: "h", color: "blue" },
+  { text: "i", sub: "i", id: "i", color: "green" },
 ];
+
 import { getElementPosition } from "./get-position";
 import "./styles.scss";
 import { useState } from "react";
@@ -19,45 +20,45 @@ const ConnectDiv = () => {
   const [lines, setLines] = useState([]);
 
   const [newLineSource, setNewLineSource] = useState(null);
+  const [line, setLine] = useState({ from: { id: "" }, to: { id: "" } });
 
-  const handleCircleClick = (circleId) => {
-    const line = { from: newLineSource, to: circleId };
-    const exclude = ["g", "h", "i"];
-    const idsLeft = arrleft.map((x) => x.id);
-
-    if (exclude.includes(circleId) && exclude.includes(newLineSource)) {
-      setNewLineSource(null);
-      setLines([]);
-      return;
-    }
-
-    if (idsLeft.includes(circleId) && idsLeft.includes(newLineSource)) {
-      setNewLineSource(null);
-      setLines([]);
-      return;
-    }
-
-    const isInclude = arrleft.map((x) => x.id).includes(circleId);
-    const newLines = lines.some(
-      (item) => item.from !== circleId && item.to !== circleId
+  const handleCircleClick = (value) => {
+    const line = { from: newLineSource, to: value };
+    setLine(line);
+    //check if value exist in lines
+    const isElementExist = lines?.some(
+      (item) => item.from.id === value.id || item.to.id === value.id
     );
 
-    if (lines.length > 0 && isInclude) {
-      setLines(newLines);
+    //remove line when click
+    if (isElementExist && !value.sub) {
+      setLines((prevLines) =>
+        prevLines.filter(
+          (item) => item.from.id !== value.id && item.to.id !== value.id
+        )
+      );
+      setNewLineSource(null);
+      return;
     }
 
-    console.log(circleId);
-    console.log(newLineSource);
+    // do nothing when choose the same right column
+    if (value?.sub && newLineSource?.sub) {
+      setNewLineSource(value);
+      return;
+    }
 
-    console.log(exclude.includes(circleId));
+    // do nothing when choose the same left column
+    if (!value?.sub && !newLineSource?.sub) {
+      setNewLineSource(value);
+      return;
+    }
 
-    console.log(exclude.includes(newLineSource));
+    if (newLineSource && value?.id !== newLineSource?.id) {
+      setLines((prevLines) => [...prevLines, line]);
 
-    if (newLineSource && circleId !== newLineSource) {
-      setLines((p) => [...p, line]);
       setNewLineSource(null);
     } else if (!newLineSource) {
-      setNewLineSource(circleId);
+      setNewLineSource(value);
     } else {
       setNewLineSource(null);
     }
@@ -69,8 +70,10 @@ const ConnectDiv = () => {
         {arrleft.map((x, index) => (
           <div
             key={index}
-            className="box-left"
-            onClick={() => handleCircleClick(x.id)}
+            className={`box-left ${
+              [line?.from?.id, line?.to?.id].includes(x?.id) && "active"
+            }`}
+            onClick={() => handleCircleClick(x)}
           >
             <div className="text">{x.text}</div>
             <div className="dot" id={x.id}></div>
@@ -79,8 +82,8 @@ const ConnectDiv = () => {
       </div>
       {Array.isArray(lines) &&
         lines?.map((line, idx) => {
-          const sourcePos = getElementPosition(line.from);
-          const targetPos = getElementPosition(line.to);
+          const sourcePos = getElementPosition(line.from.id);
+          const targetPos = getElementPosition(line.to.id);
 
           const x1 = targetPos[0] + 4;
           const x2 = sourcePos[0] + 4;
@@ -106,19 +109,13 @@ const ConnectDiv = () => {
               key={idx}
               style={{
                 position: "absolute",
-                background: "red",
+                background: line.from?.color ?? line.to?.color,
                 width: length + "px",
                 height: "2px",
                 transform: `rotate(${angle}deg)`,
                 left: xMid - length / 2 + "px",
                 top: yMid + "px",
               }}
-              onClick={(lineIdx) =>
-                setLines([
-                  ...lines.slice(0, lineIdx),
-                  ...lines.slice(lineIdx + 1),
-                ])
-              }
             ></div>
           );
         })}
@@ -126,8 +123,10 @@ const ConnectDiv = () => {
         {arrright.map((x, index) => (
           <div
             key={index}
-            className="box-right"
-            onClick={() => handleCircleClick(x.id)}
+            className={`box-right ${
+              [line?.from?.id, line?.to?.id].includes(x?.id) && "active"
+            }`}
+            onClick={() => handleCircleClick(x)}
           >
             <div className="dot" id={x.id}></div>
             <div className="box-text">
